@@ -17,10 +17,10 @@ async function(args) {
 
   const app = document.querySelector('#app')?.__vue_app__;
   const pinia = app?.config?.globalProperties?.$pinia;
-  if (!pinia?._s) return {error: 'Page not ready'};
+  if (!pinia?._s) return {error: 'Page not ready', hint: 'Not logged in?'};
 
   const searchStore = pinia._s.get('search');
-  if (!searchStore) return {error: 'Search store not found'};
+  if (!searchStore) return {error: 'Search store not found', hint: 'Not logged in?'};
 
   let captured = null;
   const origOpen = XMLHttpRequest.prototype.open;
@@ -44,7 +44,7 @@ async function(args) {
     XMLHttpRequest.prototype.send = origSend;
   }
 
-  if (!captured?.success) return {error: captured?.msg || 'Search failed', code: captured?.code};
+  if (!captured?.success) return {error: captured?.msg || 'Search failed', hint: 'Not logged in?'};
   const notes = (captured.data?.items || []).map(i => ({
     id: i.id, xsec_token: i.xsec_token,
     title: i.note_card?.display_title, type: i.note_card?.type,

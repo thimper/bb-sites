@@ -17,11 +17,11 @@ async function(args) {
 
   const app = document.querySelector('#app')?.__vue_app__;
   const pinia = app?.config?.globalProperties?.$pinia;
-  if (!pinia?._s) return {error: 'Page not ready'};
+  if (!pinia?._s) return {error: 'Page not ready', hint: 'Not logged in?'};
 
   // 先通过 note store 设置当前笔记（触发评论加载）
   const noteStore = pinia._s.get('note');
-  if (!noteStore) return {error: 'Note store not found'};
+  if (!noteStore) return {error: 'Note store not found', hint: 'Not logged in?'};
 
   let captured = null;
   const origOpen = XMLHttpRequest.prototype.open;
@@ -46,7 +46,7 @@ async function(args) {
     XMLHttpRequest.prototype.send = origSend;
   }
 
-  if (!captured?.success) return {error: captured?.msg || 'Comments fetch failed'};
+  if (!captured?.success) return {error: captured?.msg || 'Comments fetch failed', hint: 'Not logged in?'};
   const comments = (captured.data?.comments || []).map(c => ({
     id: c.id, author: c.user_info?.nickname, author_id: c.user_info?.user_id,
     content: c.content, likes: c.like_count,

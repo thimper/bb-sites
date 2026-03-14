@@ -15,7 +15,7 @@ async function(args) {
   if (!pinia?._s) return {error: 'Page not ready', hint: 'Ensure xiaohongshu.com is fully loaded'};
 
   const feedStore = pinia._s.get('feed');
-  if (!feedStore) return {error: 'Feed store not found'};
+  if (!feedStore) return {error: 'Feed store not found', hint: 'Not logged in?'};
 
   let captured = null;
   const origOpen = XMLHttpRequest.prototype.open;
@@ -38,7 +38,7 @@ async function(args) {
     XMLHttpRequest.prototype.send = origSend;
   }
 
-  if (!captured?.success) return {error: captured?.msg || 'Feed fetch failed'};
+  if (!captured?.success) return {error: captured?.msg || 'Feed fetch failed', hint: 'Not logged in?'};
   const notes = (captured.data.items || []).map(item => ({
     id: item.id, xsec_token: item.xsec_token,
     title: item.note_card?.display_title, type: item.note_card?.type,

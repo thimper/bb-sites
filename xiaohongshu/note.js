@@ -21,10 +21,10 @@ async function(args) {
 
   const app = document.querySelector('#app')?.__vue_app__;
   const pinia = app?.config?.globalProperties?.$pinia;
-  if (!pinia?._s) return {error: 'Page not ready'};
+  if (!pinia?._s) return {error: 'Page not ready', hint: 'Not logged in?'};
 
   const noteStore = pinia._s.get('note');
-  if (!noteStore) return {error: 'Note store not found'};
+  if (!noteStore) return {error: 'Note store not found', hint: 'Not logged in?'};
 
   let captured = null;
   const origOpen = XMLHttpRequest.prototype.open;

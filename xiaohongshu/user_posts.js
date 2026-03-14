@@ -17,10 +17,10 @@ async function(args) {
 
   const app = document.querySelector('#app')?.__vue_app__;
   const pinia = app?.config?.globalProperties?.$pinia;
-  if (!pinia?._s) return {error: 'Page not ready'};
+  if (!pinia?._s) return {error: 'Page not ready', hint: 'Not logged in?'};
 
   const userStore = pinia._s.get('user');
-  if (!userStore) return {error: 'User store not found'};
+  if (!userStore) return {error: 'User store not found', hint: 'Not logged in?'};
 
   let captured = null;
   const origOpen = XMLHttpRequest.prototype.open;
@@ -43,7 +43,7 @@ async function(args) {
     XMLHttpRequest.prototype.send = origSend;
   }
 
-  if (!captured?.success) return {error: captured?.msg || 'User posts fetch failed'};
+  if (!captured?.success) return {error: captured?.msg || 'User posts fetch failed', hint: 'Not logged in?'};
   const notes = (captured.data?.notes || []).map(n => ({
     note_id: n.note_id, title: n.display_title, type: n.type,
     likes: n.interact_info?.liked_count, time: n.last_update_time
