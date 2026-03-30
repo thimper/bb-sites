@@ -19,12 +19,15 @@ async function(args) {
   const ct0 = document.cookie.split(';').map(c=>c.trim()).find(c=>c.startsWith('ct0='))?.split('=')[1];
   if (!ct0) return {error: 'No ct0 cookie', hint: 'Please log in to https://x.com first.'};
 
-  // Access webpack module to generate x-client-transaction-id
+  // Access webpack module to generate x-client-transaction-id (dynamic lookup, survives x.com deploys)
   let __webpack_require__;
   const chunkId = '__bb_s_' + Date.now();
   window.webpackChunk_twitter_responsive_web.push([[chunkId], {}, (req) => { __webpack_require__ = req; }]);
-  const txMod = __webpack_require__(83914);
-  const genTxId = txMod.jJ;
+  let genTxId;
+  for (const id of Object.keys(__webpack_require__.m)) {
+    try { const m = __webpack_require__(id); if (m?.jJ) { genTxId = m.jJ; break; } } catch {}
+  }
+  if (!genTxId) return {error: 'Cannot find transaction-id generator', hint: 'x.com webpack structure may have changed'};
 
   const bearer = 'AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA';
   const path = '/i/api/graphql/oKkjeoNFNQN7IeK7AHYc0A/SearchTimeline';
